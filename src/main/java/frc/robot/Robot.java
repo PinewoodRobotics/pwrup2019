@@ -85,10 +85,10 @@ public class Robot extends TimedRobot {
 
   /**
    * This function is called periodically during autonomous.
-   *
+   */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
+    /*switch (m_autoSelected) {
       case kCustomAuto:
         // Put custom auto code here
         break;
@@ -98,9 +98,10 @@ public class Robot extends TimedRobot {
         break; 
 
       
-    }
+    }*/
+    drive(0.0, 0.5, 0.0, 1.0);
   }
-  */
+ 
 
 
 
@@ -122,29 +123,33 @@ public class Robot extends TimedRobot {
   
   public void drive(double x, double y, double z, double throttle) {
     double maximum;
-    double speedfrontleft = x + y + z;
-    double speedbackleft = -x + y + z;
-    double speedfrontright = x - y + z;
-    double speedbackright = -x - y + z;
+    double speedfrontleft = (x + y + z)*throttle;
+    double speedbackleft = (-x + y + z)*throttle;
+    double speedfrontright = (x - y + z)*throttle;
+    double speedbackright = (-x - y + z)*throttle;
 
     maximum = Math.max( Math.max(Math.abs(speedfrontleft), Math.abs(speedfrontright)),
                         Math.max(Math.abs(speedbackleft), Math.abs(speedbackright)) );
 
-    if (maximum > throttle) {
-      speedfrontleft  = speedfrontleft  * (throttle / maximum);
-      speedfrontright = speedfrontright * (throttle / maximum);
-      speedbackleft   = speedbackleft   * (throttle / maximum);
-      speedbackright  = speedbackright  * (throttle / maximum);
+    if (maximum > 1.0) {
+      speedfrontleft  = speedfrontleft   / maximum;
+      speedfrontright = speedfrontright /  maximum;
+      speedbackleft   = speedbackleft   / maximum;
+      speedbackright  = speedbackright / maximum;
     }
 
-    motorfrontleft.set(ControlMode.PercentOutput, throttle * speedfrontleft);
-    motorfrontright.set(ControlMode.PercentOutput, throttle * speedfrontright);
-    motorbackleft.set(ControlMode.PercentOutput, throttle * speedbackleft);
-    motorbackright.set(ControlMode.PercentOutput, throttle * speedbackright);
+    motorfrontleft.set(ControlMode.PercentOutput, speedfrontleft);
+    motorfrontright.set(ControlMode.PercentOutput, speedfrontright);
+    motorbackleft.set(ControlMode.PercentOutput, speedbackleft);
+    motorbackright.set(ControlMode.PercentOutput, speedbackright);
 
-    System.out.println(throttle * speedbackright);
-    System.out.println(throttle * speedbackleft);
-    System.out.println(throttle * speedfrontleft);
-    System.out.println(throttle * speedfrontright);
+    System.out.println("speedbackright=" + speedbackright);
+    System.out.println(" speedbackleft=" + speedbackleft);
+    System.out.println(" speedfrontleft=" + speedfrontleft);
+    System.out.println(" speedfrontright=" + speedfrontright);
+    System.out.println(" x=" + x);
+    System.out.println(" y=" + y);
+    System.out.println(" z=" + z);
+    System.out.println(" throttle=" + throttle);
   }
 }
